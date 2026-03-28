@@ -1,0 +1,53 @@
+# Data files
+data/raw/
+data/interim/
+*.csv
+*.parquet
+*.pkl
+*.h5
+*.hdf5
+*.arrow
+*.feather
+
+# Model binaries
+models/trained/
+models/staging/
+*.pt
+*.pth
+*.onnx
+*.pb
+*.safetensors
+*.joblib
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+credentials.*
+secrets.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session state
+.claude/session-state/
+.claude/agent-logs/
+production/session-logs/
