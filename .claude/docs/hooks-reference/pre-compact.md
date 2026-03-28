@@ -1,21 +1,28 @@
 # Hook: pre-compact.sh
 
+## Overview
+Saves session state before context compression. Enables recovery after compaction.
+
 ## Trigger
-PreCompact — runs before context compression
+- **Event**: PreCompact
+- **Timeout**: 10 seconds
 
-## Exit Codes
-- `0` — Pass (allow operation)
-- `2` — Block (prevent operation, show error)
+## What It Saves
+All saved to .claude/session-state/ with timestamp:
 
-## What It Checks
-- Saves git status, diff, log, branch\n- Saves latest experiment state\n- Saves current sprint\n- Saves active task\n- Saves TODO items\n- Prunes old state files
+- git-status-{ts}.txt — working tree changes
+- git-diff-{ts}.txt — diff statistics
+- git-log-{ts}.txt — last 10 commits
+- git-branch-{ts}.txt — current branch
+- experiments-{ts}.txt — recent experiment files
+- latest-experiment-{ts}.md — copy of most recent experiment
+- sprint-{ts}.md — copy of current sprint
+- active-task-{ts}.md — copy of active task
+- todos-{ts}.txt — all TODO items
 
-## Configuration
-Located in `.claude/hooks/pre-compact.sh`
-Configured in `.claude/settings.json` under `hooks` section.
+## Cleanup
+Prunes old state files, keeping last 5 per prefix.
 
 ## Dependencies
-- bash
-- git (for git-related hooks)
-- python3 (optional, for validation)
-- jq (optional, for JSON parsing — falls back to grep)
+- Required: bash
+- Optional: git

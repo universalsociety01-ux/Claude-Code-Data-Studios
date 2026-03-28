@@ -1,0 +1,155 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/*.pyc": true,
+      ".venv": true,
+      "data/raw": true,
+      "models/trained": true
+    },
+    "files.associations": {
+      "*.md": "markdown",
+      "CLAUDE.md": "markdown",
+      "CLAUDE.local.md": "markdown",
+      "*.yaml": "yaml",
+      "*.yml": "yaml"
+    },
+    "editor.rulers": [120],
+    "editor.formatOnSave": true,
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": ["tests/"],
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff",
+      "editor.tabSize": 4
+    },
+    "[yaml]": {
+      "editor.tabSize": 2
+    },
+    "[markdown]": {
+      "editor.wordWrap": "on",
+      "editor.quickSuggestions": {
+        "other": false,
+        "comments": false,
+        "strings": false
+      }
+    },
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "search.exclude": {
+      "data/raw/**": true,
+      "data/interim/**": true,
+      "models/trained/**": true,
+      ".venv/**": true,
+      "**/__pycache__/**": true
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "charliermarsh.ruff",
+      "ms-toolsai.jupyter",
+      "redhat.vscode-yaml",
+      "yzhang.markdown-all-in-one",
+      "mhutchie.git-graph",
+      "eamodio.gitlens",
+      "mechatroner.rainbow-csv",
+      "GrapeCity.gc-excelviewer",
+      "iterative.dvc"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Python: Current File",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      },
+      {
+        "name": "Python: Pipeline",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "src.pipelines",
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      },
+      {
+        "name": "Python: API Server",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "uvicorn",
+        "args": ["src.api.main:app", "--reload", "--port", "8000"],
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      },
+      {
+        "name": "Python: Tests",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "pytest",
+        "args": ["tests/", "-v"],
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run Tests",
+        "type": "shell",
+        "command": "pytest tests/ -v",
+        "group": {
+          "kind": "test",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Run Data Quality Checks",
+        "type": "shell",
+        "command": "bash .claude/hooks/validate-data.sh",
+        "problemMatcher": []
+      },
+      {
+        "label": "Start API Server",
+        "type": "shell",
+        "command": "uvicorn src.api.main:app --reload --port 8000",
+        "isBackground": true,
+        "problemMatcher": []
+      },
+      {
+        "label": "Lint (Ruff)",
+        "type": "shell",
+        "command": "ruff check src/ tests/",
+        "problemMatcher": []
+      },
+      {
+        "label": "Format (Ruff)",
+        "type": "shell",
+        "command": "ruff format src/ tests/",
+        "problemMatcher": []
+      }
+    ]
+  }
+}

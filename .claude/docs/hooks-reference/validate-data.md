@@ -1,21 +1,30 @@
 # Hook: validate-data.sh
 
+## Overview
+Manual data validation for file naming, sizes, immutability, and documentation.
+
 ## Trigger
-Manual — run explicitly for data file validation
+- **Event**: Manual (not auto-triggered)
+- **Usage**: bash .claude/hooks/validate-data.sh
 
 ## Exit Codes
-- `0` — Pass (allow operation)
-- `2` — Block (prevent operation, show error)
+- 0 — Passed
+- 1 — Errors found
 
-## What It Checks
-- File naming conventions (snake_case)\n- Large CSV files (should be Parquet)\n- Raw data immutability\n- Dataset documentation presence
+## Checks
 
-## Configuration
-Located in `.claude/hooks/validate-data.sh`
-Configured in `.claude/settings.json` under `hooks` section.
+### [1/4] File Naming
+Checks data/ for non-snake_case names (uppercase, spaces).
+
+### [2/4] Large CSV Files
+Finds CSVs >100MB. Recommends Parquet conversion.
+
+### [3/4] Raw Data Immutability
+Uses git diff to detect modifications in data/raw/. Raw data must never change.
+
+### [4/4] Dataset Documentation
+Checks data/processed/ and data/external/ subdirectories for README.md or schema.yaml.
 
 ## Dependencies
-- bash
-- git (for git-related hooks)
-- python3 (optional, for validation)
-- jq (optional, for JSON parsing — falls back to grep)
+- Required: bash, find
+- Optional: git

@@ -1,21 +1,24 @@
 # Hook: log-agent.sh
 
+## Overview
+Logs every subagent invocation to .claude/agent-logs/agent-log.jsonl for audit trail.
+
 ## Trigger
-SubagentStart — runs when a subagent is launched
+- **Event**: SubagentStart
+- **Timeout**: 5 seconds
 
-## Exit Codes
-- `0` — Pass (allow operation)
-- `2` — Block (prevent operation, show error)
+## Log Format
+JSONL (one JSON object per line):
+- timestamp: ISO 8601
+- agent: agent name or prompt (first 100 chars)
+- type: subagent type (general, Explore, Plan, etc.)
+- description: task description (first 200 chars)
 
-## What It Checks
-- Logs agent name, type, description\n- Timestamps all invocations\n- Rotates log at 500 entries\n- Tracks daily invocation count
-
-## Configuration
-Located in `.claude/hooks/log-agent.sh`
-Configured in `.claude/settings.json` under `hooks` section.
+## Log Management
+- Rotates at 500 entries, keeps most recent 300
+- Tracks daily invocation count
+- Reports first agent of the day
 
 ## Dependencies
-- bash
-- git (for git-related hooks)
-- python3 (optional, for validation)
-- jq (optional, for JSON parsing — falls back to grep)
+- Required: bash
+- Optional: jq (falls back to grep)

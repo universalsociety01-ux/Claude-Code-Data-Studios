@@ -1,21 +1,35 @@
 # Hook: session-start.sh
 
+## Overview
+Loads project context when a Claude Code session begins.
+
 ## Trigger
-SessionStart — runs when Claude Code session begins
+- **Event**: SessionStart
+- **Timeout**: 10 seconds
 
-## Exit Codes
-- `0` — Pass (allow operation)
-- `2` — Block (prevent operation, show error)
+## What It Loads
 
-## What It Checks
-- Git branch and recent commits\n- Uncommitted changes\n- Project stage\n- Current sprint info\n- Latest experiment\n- Active task\n- Drift alerts
+### Git Context
+- Current branch, last 5 commits, uncommitted changes (first 10)
 
-## Configuration
-Located in `.claude/hooks/session-start.sh`
-Configured in `.claude/settings.json` under `hooks` section.
+### Project Stage
+- Reads production/stage.txt for CRISP-DM lifecycle phase
+
+### Current Sprint
+- First 10 lines from production/sprints/current.md
+
+### Latest Experiment
+- Most recent .md in experiments/ (name + first 5 lines)
+
+### Active Task
+- First 10 lines from production/session-state/active.md
+
+### Session Recovery
+- Checks .claude/session-state/ for post-compact saved state
+
+### Drift Alerts
+- Counts JSON alert files in src/monitoring/alerts/
 
 ## Dependencies
-- bash
-- git (for git-related hooks)
-- python3 (optional, for validation)
-- jq (optional, for JSON parsing — falls back to grep)
+- Required: bash
+- Optional: git

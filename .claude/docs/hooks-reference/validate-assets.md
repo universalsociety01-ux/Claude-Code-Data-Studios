@@ -1,21 +1,44 @@
 # Hook: validate-assets.sh
 
+## Overview
+Post-write validation that checks files after Write/Edit operations for syntax, security, and ML anti-patterns.
+
 ## Trigger
-PostToolUse — runs after Write/Edit tool operations
+- **Event**: PostToolUse
+- **Matcher**: Write or Edit operations
+- **Timeout**: 10 seconds
 
 ## Exit Codes
-- `0` — Pass (allow operation)
-- `2` — Block (prevent operation, show error)
+- 0 — File is valid
+- 2 — Invalid syntax (YAML/JSON)
 
-## What It Checks
-- YAML syntax validation\n- JSON syntax validation\n- Python syntax check\n- Hardcoded credentials detection\n- PII field handling in data code\n- SQL safety (destructive statements, SELECT *)\n- Notebook output warnings\n- Config secrets check\n- Hardcoded paths in pipelines\n- .cuda() usage in model code
+## Checks by File Type
 
-## Configuration
-Located in `.claude/hooks/validate-assets.sh`
-Configured in `.claude/settings.json` under `hooks` section.
+### YAML (.yaml, .yml) — BLOCKING
+Validates syntax using PyYAML.
+
+### JSON (.json) — BLOCKING
+Validates syntax using json.tool.
+
+### Python (.py) — MIXED
+- BLOCKING: Syntax errors (py_compile)
+- WARNING: Hardcoded credentials
+- WARNING: PII fields in data/pipeline code without anonymization
+- WARNING: .cuda() in model code (use .to(device))
+
+### SQL (.sql) — WARNING
+- Destructive statements (DROP, TRUNCATE, DELETE FROM)
+- SELECT * usage
+
+### Notebooks (.ipynb) — WARNING
+Cell outputs present.
+
+### Configs (configs/) — WARNING
+Secrets without env var references.
+
+### Pipelines (src/pipelines/) — WARNING
+Hardcoded absolute paths or cloud URIs.
 
 ## Dependencies
-- bash
-- git (for git-related hooks)
-- python3 (optional, for validation)
-- jq (optional, for JSON parsing — falls back to grep)
+- Required: bash
+- Optional: python3, jq

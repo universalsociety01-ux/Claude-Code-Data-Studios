@@ -1,21 +1,24 @@
 # Hook: session-stop.sh
 
+## Overview
+Records session accomplishments when Claude Code exits. Creates audit trail.
+
 ## Trigger
-Stop — runs when Claude Code session ends
+- **Event**: Stop
+- **Timeout**: 10 seconds
 
-## Exit Codes
-- `0` — Pass (allow operation)
-- `2` — Block (prevent operation, show error)
+## What It Records
+Log saved to production/session-logs/session-{timestamp}.md:
 
-## What It Checks
-- Records git branch and changes\n- Logs commits made during session\n- Lists modified files\n- Records agent activity\n- Prunes old session logs
+- Branch name
+- Changes made (git diff --stat)
+- Commits this session (last 8 hours)
+- Files modified (first 30)
+- Agent activity (count + last 10 entries from agent-log.jsonl)
 
-## Configuration
-Located in `.claude/hooks/session-stop.sh`
-Configured in `.claude/settings.json` under `hooks` section.
+## Cleanup
+Keeps last 20 session logs, prunes older ones.
 
 ## Dependencies
-- bash
-- git (for git-related hooks)
-- python3 (optional, for validation)
-- jq (optional, for JSON parsing — falls back to grep)
+- Required: bash
+- Optional: git
